@@ -11,14 +11,15 @@
      ie: increase [motor_speed] by ACCEL
  - If magnitude of error is greater than DOWN_THRESH, then we decelerate (decrease [motor_speed] by DECEL)
  
-###IF THE TRACK IS NOT SEEN (ie: [max_val] is less than LIGHT_THRESH
+###IF THE TRACK IS NOT SEEN
+ - ie: [max_val] is less than LIGHT_THRESH
  - Look at the position of the last maximum detected when the track was in sight
  - If it's to the left of MIDPNT, change [output] to OFFSET deg in that direction and vice versa
  - Change speed [motor_speed] to minimum MIN_SPEED
 
-####Physically write [output+MIDPNT] to servo and [motor_speed] to motor
+Physically write [output+MIDPNT] to servo and [motor_speed] to motor
 
-####delay by DELAY_TIME milliseconds
+Delay by DELAY_TIME milliseconds
 
 ##Things to do
  - Gather linescan data? Could try supervised learning
