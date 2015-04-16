@@ -1,4 +1,4 @@
-#NATCAR KONG 2015
+#NATCAR KONG - UCLA 2015
 ##Structure of Code
 ###READ VALUES FROM CAMERA
  - Finds maximum value and index in linescan camera sample to determine position & existence of track
