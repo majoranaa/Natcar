@@ -1,6 +1,6 @@
 // CURRENT VERSION
 // NATCAR KANG - TEAM 21 - UCLA 2015
-
+// RECORD: 10.40sec
 /*******************************************
 
               STRUCTURE OF CODE
@@ -103,6 +103,7 @@ void setup()
   #endif
   
   motor_speed = (MAX_SPEED+MIN_SPEED)/2;
+  delay(1000);
 }
 
 void stop() {

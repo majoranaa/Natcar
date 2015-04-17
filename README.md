@@ -22,6 +22,7 @@ Physically write [output+MIDPNT] to servo and [motor_speed] to motor
 Delay by DELAY_TIME milliseconds
 
 ##Things to do
+ - Look further and go faster (try 75 deg angle. if too little light maybe add light. increase MAX_SPEED to 255 and MIN_SPEED to 155?)
  - Gather linescan data? Could try supervised learning
  	- Would need to get data onto computer or smth
  		- Wireless Communication

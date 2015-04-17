@@ -13,9 +13,9 @@
 #define OFFSET       20     // DEPRECATED; When Natcar doesn't see the track anymore, turn OFFSET degrees from the MIDPNT in the direction of the previously seen maximum
 #define MIDPNT       100    // The experimentally determined midpoint of the servo (ideally 90deg)
 #define MIDDLE       64     // The index of the center of the track in a sample from the linescan camera
-#define MAX_SPEED    180    // Maximum speed (0-255) that car can go
+#define MAX_SPEED    200    // Maximum speed (0-255) that car can go
 #define MIN_SPEED    120    // Minimum speed (0-255) that car can go
-#define THRESH       30     // Number of iterations of loop() that the car will go without seeing the track until it stops (assuming DEBUG_STOP is defined)
+#define THRESH       100    // Number of iterations of loop() that the car will go without seeing the track until it stops (assuming DEBUG_STOP is defined)
 #define UP_THRESH    21     // The maximum error (distance of track from MIDDLE) allowed under which the car will accelerate at rate ACCEL
 #define DOWN_THRESH  22     // The minimum error required above which the car will decelerate at rate DECEL
 #define ACCEL        .6     // Acceleration rate
