@@ -28,29 +28,10 @@ delay by DELAY_TIME milliseconds
 *******************************************/
 
 #include <Servo.h>
+#include "params.h"
+
 #define SERVO 21
 
-// debugging
-#define DEBUG_CAM           // uncomment to print out debugging info about the linescan cam
-#define DEBUG_CONT          // uncomment to print out debugging info about PID control
-#define DEBUG_MOTOR         // uncomment to print out debugging info about motor speed & error
-//#define DEBUG_STOP          // uncomment to stop car when it goes THRESH cycles without seeing the track
-
-#define LEFT_MAX     55     // Maximum angle that servo can turn on one side
-#define RIGHT_MAX    145    // Maximum angle that servo can turn on other side
-#define OFFSET       30     // When Natcar doesn't see the track anymore, turn OFFSET degrees from the MIDPNT in the direction of the previously seen maximum
-#define MIDPNT       100    // The experimentally determined midpoint of the servo (ideally 90deg)
-#define MIDDLE       60     // The index of the center of the track in a sample from the linescan camera
-#define MAX_SPEED    120    // Maximum speed (0-255) that car can go
-#define MIN_SPEED    40     // Minimum speed (0-2550 that car can go
-#define THRESH       200    // Number of iterations of loop() that the car will go without seeing the track until it stops (assuming DEBUG_STOP is defined)
-#define UP_THRESH    21     // The maximum error (distance of track from MIDDLE) allowed under which the car will accelerate at rate ACCEL
-#define DOWN_THRESH  22     // The minimum error required above which the car will decelerate at rate DECEL
-#define ACCEL        .8     // Acceleration rate
-#define DECEL        10     // Deceleration rate
-#define LIGHT_THRESH 2      // Consider the maximum from a sample of the linescan. If it is below LIGHT_THRESH then conclude that the track is not seen
-#define DELAY_TIME   5      // Amount of time to delay (in milliseconds) between iterations of loop(). Important because smaller delays doesn't allow the camera
-                            //     to refresh, ie: it allows in less light so all of the values it reporats are smaller
 // define pins
 const int brightness = 20; //A0; A6 camera input
 const int SI = 0; //1; to camera - ask for image
@@ -60,9 +41,9 @@ const int md_2 = 22; // A8 motor driver 2
 
 // define PID coefficients & PID globals
 const float KP = 0.7;
-const float KD = 0; // this should be negative
-const float KI = 0.6;//.0001;
-float accum,de,dt,diff;
+const float KD = 0.05; // this should be negative
+const float KI = 0.2;//.0001;
+float accum,de,dt,diff,diff_ma;
 unsigned long last_time, now;
 
 // construct servo controller
@@ -72,9 +53,9 @@ Servo myServo;
 int i;
 
 // READ VALUES FROM CAMERA globals
-int max_val, max_pos;
-int mid, val, output;
-int right_edge, right_found;
+int max_val, max_pos, max_pos2;
+int mid, val, output, find_sec;
+int right_edge, right_found, right_edge2, right_found2;
 
 int error, last_err;
 int last_mid;
@@ -106,6 +87,10 @@ void setup()
   max_pos = 1;
   right_edge = 128;
   right_found = 0;
+  find_sec = 0;
+  max_pos2 = 1;
+  right_edge2 = 128;
+  right_found2 = 0;
   
   error = 0;
   last_err = 0;
@@ -151,6 +136,21 @@ void loop()
       right_edge = i;
       right_found = 1;
     }
+    if (right_found) { // already found candidate for max
+      if (val == max_val && !find_sec) {
+        max_pos2 = i;
+        right_found2 = 0;
+        find_sec = 1;
+      } else if (val < max_val && !right_found2) {
+        right_edge2 = i;
+        right_found2 = 1;
+        find_sec = 0;
+        if (abs(((right_edge2-1 + max_pos2)/2)-last_mid) < abs(((right_edge-1 + max_pos)/2)-last_mid)) { // this max is closer than the previous max
+          max_pos = max_pos2;
+          right_edge = right_edge2;
+        }
+      }
+    }
     
     #ifdef DEBUG_CAM
     Serial.print(val);
@@ -167,9 +167,13 @@ void loop()
   for (i = 1; i < right_edge; i++) {
      if (i == max_pos || i == right_edge-1) {
        Serial.print("|");
-     } else if (i == mid) {
+     } else if (i == mid && i != last_mid) {
        Serial.print("*");
-     } else {
+     } else if (i == mid && i == last_mid) {
+       Serial.print("!");
+     } else if (i == last_mid && i != mid) {
+       Serial.print("0");
+     }else {
        Serial.print(" ");
      }
   }
@@ -218,6 +222,10 @@ void loop()
       stop();
     }
     #endif
+  } else {
+    #ifdef DEBUG_STOP
+    count = 0;
+    #endif
   }
   
   #ifdef DEBUG_MOTOR
@@ -240,8 +248,10 @@ void loop()
   //myServo.write(MIDPNT);
 
   // WRITE SPEED
+  #ifndef NO_MOTOR
   analogWrite(md_2, motor_speed);
   analogWrite(md_1, 0);
+  #endif
   
   /*#ifdef DEBUG_STOP
   if (millis() > 8000) {
