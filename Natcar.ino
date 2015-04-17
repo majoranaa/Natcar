@@ -40,9 +40,9 @@ const int md_1 = 23; // A9 motor driver 1
 const int md_2 = 22; // A8 motor driver 2
 
 // define PID coefficients & PID globals
-const float KP = 0.7;
-const float KD = 0.05; // this should be negative
-const float KI = 0.2;//.0001;
+const float KP = K_P; //0.7;
+const float KD = K_D; //0.07; // this should be negative
+const float KI = K_I; //0.2;//.0001;
 float accum,de,dt,diff,diff_ma;
 unsigned long last_time, now;
 
@@ -54,7 +54,7 @@ int i;
 
 // READ VALUES FROM CAMERA globals
 int max_val, max_pos, max_pos2;
-int mid, val, output, find_sec;
+int mid, val, output, find_sec, last_output;
 int right_edge, right_found, right_edge2, right_found2;
 
 int error, last_err;
@@ -92,6 +92,8 @@ void setup()
   right_edge2 = 128;
   right_found2 = 0;
   
+  last_output = 0;
+  
   error = 0;
   last_err = 0;
   last_mid = MIDDLE;
@@ -100,7 +102,7 @@ void setup()
   count = 0;
   #endif
   
-  motor_speed = MAX_SPEED/2;
+  motor_speed = (MAX_SPEED+MIN_SPEED)/2;
 }
 
 void stop() {
@@ -208,7 +210,8 @@ void loop()
     mid = last_mid;
     error = last_err; // these lines ensure that the last_mid and last_err are the mid position and error from the last cycle when the track was in view
     
-    output = (mid<MIDDLE)?-OFFSET:((mid>MIDDLE)?OFFSET:0);
+    output = last_output;
+    //output = (mid<MIDDLE)?-OFFSET:((mid>MIDDLE)?OFFSET:0);
     
     #ifdef DEBUG_CONT
     Serial.print("Off the line with output: ");
@@ -240,6 +243,7 @@ void loop()
   last_err = error;
   last_time = now;
   last_mid = mid;
+  last_output = output;
   
   // SET SERVO
   //myServo.write((((output + MIDPNT)>RIGHT_MAX)?RIGHT_MAX:(((output+MIDPNT)<LEFT_MAX)?LEFT_MAX:output+MIDPNT))+(motor_speed/10)); // attempt to correct midpoint when motor speed changes,
