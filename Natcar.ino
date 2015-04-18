@@ -1,6 +1,7 @@
 // CURRENT VERSION
 // NATCAR KANG - TEAM 21 - UCLA 2015
-// RECORD: 10.40sec
+// RECORD: 10.40sec - 8.46fps looking @ 22cm in front @ MIN_SPEED 120 MAX_SPEED 200
+
 /*******************************************
 
               STRUCTURE OF CODE
@@ -21,7 +22,11 @@ IF THE TRACK IS NOT SEEN (ie: [max_val] is less than LIGHT_THRESH)
  - If it's to the left of MIDPNT, change [output] to OFFSET deg in that direction and vice versa
  - Change speed [motor_speed] to minimum MIN_SPEED
 
-Physically write [output+MIDPNT] to servo and [motor_speed] to motor
+Physically write [output+MIDPNT] to servo
+
+Determine if you should fast stop this cycle based on this cycle's diff
+
+Physically write [motor_speed] to motor
 
 delay by DELAY_TIME milliseconds
 
@@ -65,7 +70,8 @@ int count;
 #endif
 
 // MOTOR globals
-float motor_speed;
+float motor_speed, this_speed, that_speed;;
+int stop_count, stopping;
 
 void setup()
 {
@@ -103,6 +109,8 @@ void setup()
   #endif
   
   motor_speed = (MAX_SPEED+MIN_SPEED)/2;
+  stop_count = 0;
+  stopping = 0;
   delay(1000);
 }
 
@@ -226,10 +234,31 @@ void loop()
       stop();
     }
     #endif
-  } else {
+  } else { // sees track
     #ifdef DEBUG_STOP
     count = 0;
     #endif
+    // DETERMINE FAST STOP
+    //if (abs(diff) > DIFF_THRESH && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
+    if (abs(error) > ERR_THRESH) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
+      stop();
+      stopping = 1;
+      stop_count = 0;
+    }
+    if (stopping) {
+      if (stop_count < NUM_STOP) {
+        this_speed = 0;
+        that_speed = 0;
+        stop_count++;
+      } else {
+        stopping = 0;
+        this_speed = motor_speed;
+        that_speed = 0;
+      }
+    } else {
+      this_speed = motor_speed;
+      that_speed = 0;
+    }
   }
   
   #ifdef DEBUG_MOTOR
@@ -254,8 +283,9 @@ void loop()
 
   // WRITE SPEED
   #ifndef NO_MOTOR
-  analogWrite(md_2, motor_speed);
-  analogWrite(md_1, 0);
+  //analogWrite(md_2, motor_speed);
+  analogWrite(md_2, this_speed);
+  analogWrite(md_1, that_speed);
   #endif
   
   /*#ifdef DEBUG_STOP
