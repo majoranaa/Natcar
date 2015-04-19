@@ -2,7 +2,7 @@
 #define PARAMS_H
 
 // CURRENTLY LOOKING:
-// 27cm
+// 22cm
 
 // debugging
 #define DEBUG_CAM           // uncomment to print out debugging info about the linescan cam
@@ -32,7 +32,7 @@
 #define NUM_STOP     5      // Cycles to stop for each time; appx 100 cycles per second
 #define MAX_WEIGHT   .5     // Weight to put on MAX_SPEED when calculating speed threshold for fast stop
 
-#define K_P          0.7
+#define K_P          0.8
 #define K_D          0.09
 #define K_I          0.2
 
