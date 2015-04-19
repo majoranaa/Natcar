@@ -25,6 +25,7 @@ IF THE TRACK IS NOT SEEN (ie: [max_val] is less than LIGHT_THRESH)
 Physically write [output+MIDPNT] to servo
 
 Determine if you should fast stop this cycle based on this cycle's diff
+ - if (off track or too large error) and didn't stop yet and speed large enough
 
 Physically write [motor_speed] to motor
 
@@ -70,8 +71,8 @@ int count;
 #endif
 
 // MOTOR globals
-float motor_speed, this_speed, that_speed;;
-int stop_count, stopping;
+float motor_speed, this_speed, that_speed;
+int stop_count, stopping, not_seen, stopped, hit_max;
 
 void setup()
 {
@@ -111,6 +112,9 @@ void setup()
   motor_speed = (MAX_SPEED+MIN_SPEED)/2;
   stop_count = 0;
   stopping = 0;
+  stopped = 0;
+  not_seen = 0;
+  hit_max = 0;
   delay(1000);
 }
 
@@ -216,6 +220,7 @@ void loop()
   if (error > DOWN_THRESH || error < -DOWN_THRESH) motor_speed = (motor_speed<=MIN_SPEED)?MIN_SPEED:motor_speed-DECEL;
   
   if (max_val < LIGHT_THRESH) { // if track is not seen
+    not_seen = 1;
     mid = last_mid;
     error = last_err; // these lines ensure that the last_mid and last_err are the mid position and error from the last cycle when the track was in view
     
@@ -235,32 +240,45 @@ void loop()
     }
     #endif
   } else { // sees track
+    not_seen = 0;
+    if (abs(diff) < DIFF_THRESH) {
+    //if (abs(error) < ERR_THRESH) {
+      stopped = 0;
+    }
     #ifdef DEBUG_STOP
     count = 0;
     #endif
-    // DETERMINE FAST STOP
-    //if (abs(diff) > DIFF_THRESH && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
-    if (abs(error) > ERR_THRESH) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
-      stop();
-      stopping = 1;
-      stop_count = 0;
-    }
-    if (stopping) {
-      if (stop_count < NUM_STOP) {
-        this_speed = 0;
-        that_speed = 0;
-        stop_count++;
-      } else {
-        stopping = 0;
-        this_speed = motor_speed;
-        that_speed = 0;
-      }
+  }
+
+  // DETERMINE FAST STOP
+  if ((abs(diff) > DIFF_THRESH || not_seen) && !stopped && !stopping && hit_max && 0) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
+  //if ((abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
+    //stop();
+    stopping = 1;
+    stop_count = 0;
+  }
+  if (stopping) {
+    if (stop_count < NUM_STOP) {
+      this_speed = 0;//MIN_SPEED*.5;
+      that_speed = BACK_SPEED;
+      #ifdef DEBUG_CONT
+      Serial.println("FAST STOP");
+      Serial.print("with count: ");
+      Serial.println(stop_count);
+      #endif
+      stop_count++;
     } else {
+      stopping = 0;
+      stopped = 1;
+      hit_max = 0;
       this_speed = motor_speed;
       that_speed = 0;
     }
+  } else {
+    this_speed = motor_speed;
+    that_speed = 0;
   }
-  
+
   #ifdef DEBUG_MOTOR
   Serial.print("Motor speed: ");
   Serial.println(motor_speed);
@@ -269,6 +287,11 @@ void loop()
   Serial.print("Max pos: ");
   Serial.println(mid);
   #endif
+  
+  // determine if the car hit MAX_SPEED since the last fast stop
+  if (motor_speed >= MAX_SPEED) {
+    hit_max = 1;
+  }
   
   last_err = error;
   last_time = now;
