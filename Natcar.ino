@@ -49,7 +49,7 @@ const int md_2 = 22; // A8 motor driver 2
 const float KP = K_P; //0.7;
 const float KD = K_D; //0.07; // this should be negative
 const float KI = K_I; //0.2;//.0001;
-float accum,de,dt,diff,diff_ma;
+float accum,de,dt,diff,last_diff;
 unsigned long last_time, now;
 
 // construct servo controller

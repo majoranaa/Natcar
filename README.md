@@ -1,9 +1,9 @@
 #NATCAR KONG - UCLA 2015
 ##Checklist
- - Tires: None
+ - Tires: Freescale
  - Camera focal length
- - Camera height - 5in
- - Camera angle - 27cm
+ - Camera height - 5 7/8in
+ - Camera angle - 33cm
 
 ##Structure of Code
 ###READ VALUES FROM CAMERA
