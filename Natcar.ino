@@ -72,7 +72,9 @@ int count;
 
 // MOTOR globals
 float motor_speed, this_speed, that_speed;
-int stop_count, stopping, not_seen, stopped, hit_max;
+int stop_count, stopping, not_seen, stopped, hit_max, two;
+
+int exp_delay;
 
 void setup()
 {
@@ -116,6 +118,8 @@ void setup()
   stopped = 0;
   not_seen = 0;
   hit_max = 0;
+  
+  exp_delay = DELAY_TIME;
   delay(1000);
 }
 
@@ -222,7 +226,9 @@ void loop()
   if (error < UP_THRESH && error > -UP_THRESH) motor_speed = (motor_speed>=MAX_SPEED)?MAX_SPEED:motor_speed+ACCEL;
   if (error > DOWN_THRESH || error < -DOWN_THRESH) motor_speed = (motor_speed<=MIN_SPEED)?MIN_SPEED:motor_speed-DECEL;
   
-  if (max_val < LIGHT_THRESH || abs(error) > ERR_THRESH) { // if track is not seen
+  if (max_val < LIGHT_THRESH || abs(error) > ERR_THRESH || abs(right_edge-1 - max_pos) > WIDTH_THRESH) { // if track is not seen
+  //if (abs(right_edge-1 - max_pos) > WIDTH_THRESH) {
+    //stop();
     not_seen = 1;
     mid = last_mid;
     this_diff = last_diff;
@@ -325,5 +331,13 @@ void loop()
   }
   #endif*/
   
-  delay(DELAY_TIME);
+  if (max_val > 4) {
+    exp_delay = (exp_delay <= 0)?exp_delay:exp_delay-1;
+  } else if (max_val < 3) {
+    exp_delay = (exp_delay >= 15)?exp_delay:exp_delay+1;
+  }
+  Serial.print("EXP_DELAY: ");
+  Serial.println(exp_delay);  
+  //delay(DELAY_TIME);
+  delay(exp_delay);
 }
