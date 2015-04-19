@@ -49,7 +49,7 @@ const int md_2 = 22; // A8 motor driver 2
 const float KP = K_P; //0.7;
 const float KD = K_D; //0.07; // this should be negative
 const float KI = K_I; //0.2;//.0001;
-float accum,de,dt,diff,last_diff;
+float accum,de,dt,diff;
 unsigned long last_time, now;
 
 // construct servo controller
@@ -60,7 +60,7 @@ int i;
 
 // READ VALUES FROM CAMERA globals
 int max_val, max_pos, max_pos2;
-int mid, val, output, find_sec, last_output;
+int mid, val, output, find_sec, last_output, last_diff, this_diff;
 int right_edge, right_found, right_edge2, right_found2;
 
 int error, last_err;
@@ -103,6 +103,7 @@ void setup()
   
   error = 0;
   last_err = 0;
+  last_diff = 0;
   last_mid = MIDDLE;
   
   #ifdef DEBUG_STOP
@@ -160,7 +161,8 @@ void loop()
         right_edge2 = i;
         right_found2 = 1;
         find_sec = 0;
-        if (abs(((right_edge2-1 + max_pos2)/2)-last_mid) < abs(((right_edge-1 + max_pos)/2)-last_mid)) { // this max is closer than the previous max
+        //if (abs(((right_edge2-1 + max_pos2)/2)-last_mid) < abs(((right_edge-1 + max_pos)/2)-last_mid)) { // this max is closer than the previous max
+        if (abs((((right_edge2-1 + max_pos2)/2)-last_mid)-last_diff) < abs((((right_edge-1 + max_pos2)/2)-last_mid)-last_diff)) { // this max going same direction as previous
           max_pos = max_pos2;
           right_edge = right_edge2;
         }
@@ -177,6 +179,7 @@ void loop()
   #endif
   
   mid = (right_edge-1 + max_pos)/2;
+  this_diff = mid - last_mid;
   
   #ifdef DEBUG_CAM
   for (i = 1; i < right_edge; i++) {
@@ -219,9 +222,10 @@ void loop()
   if (error < UP_THRESH && error > -UP_THRESH) motor_speed = (motor_speed>=MAX_SPEED)?MAX_SPEED:motor_speed+ACCEL;
   if (error > DOWN_THRESH || error < -DOWN_THRESH) motor_speed = (motor_speed<=MIN_SPEED)?MIN_SPEED:motor_speed-DECEL;
   
-  if (max_val < LIGHT_THRESH) { // if track is not seen
+  if (max_val < LIGHT_THRESH || abs(error) > ERR_THRESH) { // if track is not seen
     not_seen = 1;
     mid = last_mid;
+    this_diff = last_diff;
     error = last_err; // these lines ensure that the last_mid and last_err are the mid position and error from the last cycle when the track was in view
     
     output = last_output;
@@ -252,7 +256,7 @@ void loop()
 
   // DETERMINE FAST STOP
   //if ((abs(diff) > DIFF_THRESH || abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
-  if ((abs(diff) > DIFF_THRESH || not_seen) && !stopped && !stopping && hit_max && 0) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
+  if ((abs(diff) > DIFF_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
   //if ((abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
     //stop();
     stopping = 1;
@@ -299,6 +303,7 @@ void loop()
   last_time = now;
   last_mid = mid;
   last_output = output;
+  last_diff = this_diff;
   
   // SET SERVO
   //myServo.write((((output + MIDPNT)>RIGHT_MAX)?RIGHT_MAX:(((output+MIDPNT)<LEFT_MAX)?LEFT_MAX:output+MIDPNT))+(motor_speed/10)); // attempt to correct midpoint when motor speed changes,

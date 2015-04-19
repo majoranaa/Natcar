@@ -26,15 +26,15 @@
 #define LIGHT_THRESH 1      // Consider the maximum from a sample of the linescan. If it is below LIGHT_THRESH then conclude that the track is not seen
 #define DELAY_TIME   7     // Amount of time to delay (in milliseconds) between iterations of loop(). Important because smaller delays doesn't allow the camera
                             //     to refresh, ie: it allows in less light so all of the values it reporats are smaller
-#define DIFF_THRESH  100    // The diff threshold above which we fast stop this cycle (Now second derivative)
-//#define ERR_THRESH   33     // Error threshold equivalent for DIFF_THRESH
+#define DIFF_THRESH  350    // The diff threshold above which we fast stop this cycle (Now second derivative)
+#define ERR_THRESH   35     // Error threshold equivalent for DIFF_THRESH
 #define BACK_SPEED   0
 // Speed to go backwards when fast stopping
-#define NUM_STOP     200      // Cycles to stop for each time; appx 100 cycles per second
+#define NUM_STOP     20      // Cycles to stop for each time; appx 100 cycles per second
 #define MAX_WEIGHT   .5     // Weight to put on MAX_SPEED when calculating speed threshold for fast stop
 
-#define K_P          0.9
-#define K_D          0.08
+#define K_P          1
+#define K_D          0.09
 #define K_I          0.2
 
-#endif
+#endif // PARAMS_H
