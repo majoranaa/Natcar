@@ -1,4 +1,10 @@
 #NATCAR KONG - UCLA 2015
+##Checklist
+ - Tires: None
+ - Camera focal length
+ - Camera height - 5in
+ - Camera angle - 27cm
+
 ##Structure of Code
 ###READ VALUES FROM CAMERA
  - Finds maximum value and index in linescan camera sample to determine position & existence of track

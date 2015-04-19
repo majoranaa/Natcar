@@ -251,6 +251,7 @@ void loop()
   }
 
   // DETERMINE FAST STOP
+  //if ((abs(diff) > DIFF_THRESH || abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
   if ((abs(diff) > DIFF_THRESH || not_seen) && !stopped && !stopping && hit_max && 0) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
   //if ((abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
     //stop();
@@ -271,6 +272,7 @@ void loop()
       stopping = 0;
       stopped = 1;
       hit_max = 0;
+      motor_speed = MIN_SPEED;
       this_speed = motor_speed;
       that_speed = 0;
     }
