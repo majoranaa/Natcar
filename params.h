@@ -8,7 +8,7 @@
 #define DEBUG_CAM           // uncomment to print out debugging info about the linescan cam
 #define DEBUG_CONT          // uncomment to print out debugging info about PID control
 #define DEBUG_MOTOR         // uncomment to print out debugging info about motor speed & error
-//#define NO_MOTOR
+//#define NO_MOTOR            // uncomment to debug servo only
 //#define DEBUG_STOP          // uncomment to stop car when it goes THRESH cycles without seeing the track
 
 #define LEFT_MAX     55     // Maximum angle that servo can turn on one side
@@ -16,25 +16,25 @@
 #define OFFSET       20     // DEPRECATED; When Natcar doesn't see the track anymore, turn OFFSET degrees from the MIDPNT in the direction of the previously seen maximum
 #define MIDPNT       100    // The experimentally determined midpoint of the servo (ideally 90deg)
 #define MIDDLE       64     // The index of the center of the track in a sample from the linescan camera
-#define MAX_SPEED    180    // Maximum speed (0-255) that car can go
-#define MIN_SPEED    130    // Minimum speed (0-255) that car can go
+#define MAX_SPEED    150    // Maximum speed (0-255) that car can go
+#define MIN_SPEED    110    // Minimum speed (0-255) that car can go
 #define THRESH       100    // Number of iterations of loop() that the car will go without seeing the track until it stops (assuming DEBUG_STOP is defined)
 #define UP_THRESH    21     // The maximum error (distance of track from MIDDLE) allowed under which the car will accelerate at rate ACCEL
 #define DOWN_THRESH  22     // The minimum error required above which the car will decelerate at rate DECEL
 #define ACCEL        .6     // Acceleration rate
-#define DECEL        12    // Deceleration rate
-#define LIGHT_THRESH 1      // Consider the maximum from a sample of the linescan. If it is below LIGHT_THRESH then conclude that the track is not seen
-#define DELAY_TIME   7     // Amount of time to delay (in milliseconds) between iterations of loop(). Important because smaller delays doesn't allow the camera
+#define DECEL        12     // Deceleration rate
+#define LIGHT_THRESH 2      // Consider the maximum from a sample of the linescan. If it is below LIGHT_THRESH then conclude that the track is not seen
+#define DELAY_TIME   7      // Initial amount of time to delay (in milliseconds) between iterations of loop(). Important because smaller delays doesn't allow the camera
                             //     to refresh, ie: it allows in less light so all of the values it reporats are smaller
-#define DIFF_THRESH  350    // The diff threshold above which we fast stop this cycle (Now second derivative)
+#define DIFF_THRESH  300    // The diff threshold above which we fast stop this cycle
 #define ERR_THRESH   35     // Error threshold equivalent for DIFF_THRESH
-#define BACK_SPEED   0
-// Speed to go backwards when fast stopping
-#define NUM_STOP     20      // Cycles to stop for each time; appx 100 cycles per second
+#define BACK_SPEED   0      // Speed to go backwards when fast stopping
+#define NUM_STOP     25     // Cycles to stop for each time; appx 100 cycles per second
 #define MAX_WEIGHT   .5     // Weight to put on MAX_SPEED when calculating speed threshold for fast stop
+#define WIDTH_THRESH 25
 
 #define K_P          1
-#define K_D          0.09
+#define K_D          0.1
 #define K_I          0.2
 
 #endif // PARAMS_H
