@@ -9,7 +9,7 @@
  - Tires: Freescale
  - Camera focal length
  - Camera height - 5 7/8in
- - Camera angle - 37cm
+ - Camera angle - 45cm
  - Battery
 
 ##Things to do
