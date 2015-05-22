@@ -16,8 +16,8 @@
 #define OFFSET       20     // DEPRECATED; When Natcar doesn't see the track anymore, turn OFFSET degrees from the MIDPNT in the direction of the previously seen maximum
 #define MIDPNT       100    // The experimentally determined midpoint of the servo (ideally 90deg)
 #define MIDDLE       64     // The index of the center of the track in a sample from the linescan camera
-#define MAX_SPEED    210    // Maximum speed (0-255) that car can go
-#define MIN_SPEED    160    // Minimum speed (0-255) that car can go
+#define MAX_SPEED    230    // Maximum speed (0-255) that car can go
+#define MIN_SPEED    180    // Minimum speed (0-255) that car can go
 #define THRESH       100    // Number of iterations of loop() that the car will go without seeing the track until it stops (assuming DEBUG_STOP is defined)
 #define UP_THRESH    21     // The maximum error (distance of track from MIDDLE) allowed under which the car will accelerate at rate ACCEL
 #define DOWN_THRESH  22     // The minimum error required above which the car will decelerate at rate DECEL
@@ -29,9 +29,9 @@
 #define DIFF_THRESH  300    // The diff threshold above which we fast stop this cycle
 #define ERR_THRESH   35     // Error threshold equivalent for DIFF_THRESH
 //#define BACK_SPEED   0      // Speed to go backwards when fast stopping
-#define STOP_DECEL   255     // Decleration rate for the fast stop
-#define STOP_SPEED   0     // Speed to reach for fast stop
-#define NUM_STOP     500     // Cycles to stop for each time; appx 100 cycles per second
+#define STOP_DECEL   100     // Decleration rate for the fast stop
+#define STOP_SPEED   50     // Speed to reach for fast stop
+#define NUM_STOP     10     // Cycles to stop for each time; appx 100 cycles per second
 #define MAX_WEIGHT   .5     // Weight to put on MAX_SPEED when calculating speed threshold for fast stop
 #define WIDTH_THRESH 25
 
