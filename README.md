@@ -6,10 +6,11 @@
  - UCSD Grand PrIEEE 4/19/2015 - 170ft in 22.68sec = 7.496fps
 
 ##Checklist
- - Tires: Freescale
+ - Tires: Buggy
  - Camera focal length
  - Camera height - 5 7/8in
- - Camera angle - 45cm
+ - Camera angle - 42cm
+ - With weight
  - Battery
 
 ##Things to do
