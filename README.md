@@ -1,6 +1,7 @@
 #NATCAR KONG - UCLA 2015
 
 ##Records
+ - IEEE Lab 5/21/2015 - 88ft in 9.12sec = 9.65fps
  - IEEE Lab 4/17/2015 - 88ft in 10.40sec = 8.46fps looking @ 22cm in front @ MIN_SPEED 120 MAX_SPEED 200
  - IEEE Lab 4/18/2015 - 88ft in 10.03sec = 8.77fps
  - UCSD Grand PrIEEE 4/19/2015 - 170ft in 22.68sec = 7.496fps
