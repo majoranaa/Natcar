@@ -208,6 +208,9 @@ void loop()
     //output = (mid<MIDDLE)?-OFFSET:((mid>MIDDLE)?OFFSET:0);
     
     #ifdef DEBUG_CONT
+    if (abs(right_edge-1 - max_pos) > WIDTH_THRESH) {
+      Serial.print("WIDTH TOO LARGE: ");
+    }
     Serial.print("Off the line with output: ");
     Serial.println(output);
     #endif
@@ -236,6 +239,7 @@ void loop()
   //if (0) {
     //if ((abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
     //stop();
+    //output = 0;
     slowing = 1;
     last_speed = motor_speed;
     //stopping = 1;
@@ -249,8 +253,10 @@ void loop()
       stopping = 1;
       slowing = 0;
     }
+    //output = 0;
     last_speed = this_speed;
   } else if (stopping) {
+    //output = 0;
     if (stop_count < NUM_STOP) {
       this_speed = STOP_SPEED;
       that_speed = 0;
@@ -315,7 +321,7 @@ void loop()
   #endif*/
   
   if (max_val > 4) {
-    exp_delay = (exp_delay <= 0)?exp_delay:exp_delay-1;
+    exp_delay = (exp_delay <= 5)?exp_delay:exp_delay-1;
   } else if (max_val < 3) {
     exp_delay = (exp_delay >= 15)?exp_delay:exp_delay+1;
   }
