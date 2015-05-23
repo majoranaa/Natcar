@@ -239,7 +239,7 @@ void loop()
   //if (0) {
     //if ((abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
     //stop();
-    //output = 0;
+    output = 0;
     slowing = 1;
     last_speed = motor_speed;
     //stopping = 1;
@@ -253,14 +253,14 @@ void loop()
       stopping = 1;
       slowing = 0;
     }
-    //output = 0;
+    output = 0;
     last_speed = this_speed;
   } else if (stopping) {
-    //output = 0;
+    output = 0;
     if (stop_count < NUM_STOP) {
       this_speed = STOP_SPEED;
-      that_speed = 0;
-      //that_speed = BACK_SPEED;
+      //that_speed = 0;
+      that_speed = BACK_SPEED;
       #ifdef DEBUG_CONT
       Serial.println("FAST STOP");
       Serial.print("with count: ");
