@@ -196,7 +196,7 @@ void loop()
   // changed this so that if we're below MIN_SPEED b/c of fast stop then we don't decelerate. if we're above then we can decelerate like normal
   if (error > DOWN_THRESH || error < -DOWN_THRESH) motor_speed = (motor_speed==MIN_SPEED)?MIN_SPEED:((motor_speed<MIN_SPEED)?motor_speed:motor_speed-DECEL);
   
-  if (max_val < LIGHT_THRESH || abs(error) > ERR_THRESH || abs(right_edge-1 - max_pos) > WIDTH_THRESH) { // if track is not seen
+  if (max_val < LIGHT_THRESH || abs(right_edge-1 - max_pos) > WIDTH_THRESH) { // if track is not seen //  abs(error) > ERR_THRESH || 
   //if (abs(right_edge-1 - max_pos) > WIDTH_THRESH) {
     //stop();
     not_seen = 1;
@@ -239,7 +239,7 @@ void loop()
   //if (0) {
     //if ((abs(error) > ERR_THRESH || not_seen) && !stopped && !stopping && hit_max) { // && motor_speed > ((1-MAX_WEIGHT)*MIN_SPEED + MAX_WEIGHT*MAX_SPEED)) {
     //stop();
-    output = 0;
+    //output = 0;
     slowing = 1;
     last_speed = motor_speed;
     //stopping = 1;
@@ -253,10 +253,10 @@ void loop()
       stopping = 1;
       slowing = 0;
     }
-    output = 0;
+    //output = 0;
     last_speed = this_speed;
   } else if (stopping) {
-    output = 0;
+    //output = 0;
     if (stop_count < NUM_STOP) {
       this_speed = STOP_SPEED;
       //that_speed = 0;
